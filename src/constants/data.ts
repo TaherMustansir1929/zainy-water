@@ -12,11 +12,26 @@ export const sector_list = [
   { id: "4", name: "Building D" },
 ];
 
-export const customer: Record<string, any> = {
-  id: "abcd",
+export type Customer = {
+  id: string;
+  customer_id: string;
+  name: string;
+  address: string;
+  phone: string;
+  bottle_price: number;
+  balance: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const customer: Customer = {
+  id: "1",
+  customer_id: "abcd",
   name: "John Doe",
   address: "123 Main St, City, Country",
   phone: "123-456-7890",
   bottle_price: 100,
   balance: 500,
+  createdAt: new Date("2023-01-01T00:00:00Z"),
+  updatedAt: new Date("2023-01-02T00:00:00Z"),
 }
