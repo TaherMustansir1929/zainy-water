@@ -15,7 +15,7 @@ import { useModeratorStore } from "@/lib/moderator-state";
 import {
   getCustomerById,
   getDailyDeliveryRecords,
-} from "@/actions/mod-delivery.action";
+} from "@/actions/moderator/mod-delivery.action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 

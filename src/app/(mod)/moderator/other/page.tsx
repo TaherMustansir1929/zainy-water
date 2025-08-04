@@ -4,7 +4,7 @@ import { OtherExpenseTable } from "./other-expense-table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CircleDollarSign, LinkIcon } from "lucide-react";
-import { moderatorMiddleware } from "@/actions/mod-middleware";
+import { moderatorMiddleware } from "@/actions/moderator/mod-middleware";
 import { redirect } from "next/navigation";
 
 const OtherExpensePage = async () => {

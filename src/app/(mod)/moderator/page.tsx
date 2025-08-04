@@ -5,7 +5,7 @@ import { DailyDeliveryTable } from "./daily-delivery-table";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CalendarCheck, LinkIcon } from "lucide-react";
-import { moderatorMiddleware } from "@/actions/mod-middleware";
+import { moderatorMiddleware } from "@/actions/moderator/mod-middleware";
 import { redirect } from "next/navigation";
 
 const ModeratorPage = async () => {

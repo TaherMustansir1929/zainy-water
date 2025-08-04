@@ -14,19 +14,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginModerator } from "@/actions/moderator/mod-login.action";
-import { toast } from "sonner";
-import { redirect } from "next/navigation";
-import { useModeratorStore } from "@/lib/moderator-state";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { loginAdmin } from "@/actions/admin/admin-login.action";
+import { toast } from "sonner";
+import { useAdminStore } from "@/lib/admin-state";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
   password: z.string().min(4),
 });
 
-export const ModLoginForm = () => {
+export const AdminLoginForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,30 +40,27 @@ export const ModLoginForm = () => {
   // 2. FORM submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
-
-    const { success, message, mod_data } = await loginModerator(
+    const { success, message, admin_data } = await loginAdmin(
       values.name,
       values.password
     );
-
     setSubmitting(false);
 
-    if (!success || !mod_data) {
+    if (!success || !admin_data) {
       form.setError("root", { type: "manual", message });
       toast.error(message);
       return;
     }
 
-    const { setModerator } = useModeratorStore.getState();
+    const { setAdmin } = useAdminStore.getState();
 
-    setModerator({
-      id: mod_data.id,
-      name: mod_data.name,
-      areas: mod_data.areas,
+    setAdmin({
+      id: admin_data.id,
+      name: admin_data.name,
     });
 
     toast.success(message);
-    redirect("/moderator");
+    redirect("/admin");
   }
 
   return (

@@ -19,7 +19,7 @@ import { useModeratorStore } from "@/lib/moderator-state";
 import {
   createOtherExpense,
   OtherExpenseData,
-} from "@/actions/mod-other-exp.action";
+} from "@/actions/moderator/mod-other-exp.action";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";

@@ -1,10 +1,10 @@
 "use server";
 
-import { prisma } from "../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { cookies } from "next/headers";
 
 export async function loginModerator(name: string, password: string) {
-  const mod_data = await prisma.moderator.findFirst({
+  const mod_data = await prisma.moderator.findUnique({
     where: {
       name,
       password,

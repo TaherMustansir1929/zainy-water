@@ -1,7 +1,7 @@
 "use server";
 
 import { OtherExpense } from "@prisma/client";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../../lib/prisma";
 
 export type OtherExpenseData = {
   moderator_id: string;

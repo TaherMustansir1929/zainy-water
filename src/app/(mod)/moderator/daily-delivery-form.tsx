@@ -21,7 +21,7 @@ import {
   addDailyDeliveryRecord,
   DeliveryRecord,
   getCustomerDataById,
-} from "@/actions/mod-delivery.action";
+} from "@/actions/moderator/mod-delivery.action";
 import { Loader2 } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";

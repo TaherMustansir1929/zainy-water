@@ -1,3 +1,4 @@
+"use client";
 import {
   Calendar,
   Home,
@@ -18,34 +19,37 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Separator } from "./ui/separator";
+import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 // Menu items.
 const items = [
   {
     title: "Bottle Inventory",
-    url: "#",
+    url: "/bottle-inventory",
     icon: Home,
   },
   {
     title: "Customer History",
-    url: "#",
+    url: "/customer-history",
     icon: Inbox,
   },
   {
     title: "Set Bottle Price",
-    url: "#",
+    url: "/set-bottle-price",
     icon: Calendar,
   },
   {
     title: "Other Expenses",
-    url: "#",
+    url: "/other-expenses",
     icon: Search,
   },
   {
     title: "Moderator Reports",
-    url: "#",
+    url: "/moderator-reports",
     icon: Settings,
   },
 ];
@@ -53,17 +57,19 @@ const items = [
 const admin_features = [
   {
     title: "Add Moderator",
-    url: "#",
+    url: "/add-moderator",
     icon: PlusCircle,
   },
   {
     title: "Change Password",
-    url: "#",
+    url: "/change-password",
     icon: Key,
   },
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <Sidebar className="">
       <SidebarContent>
@@ -82,22 +88,30 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url} className="text-lg">
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      "hover:bg-gray-100",
+                      pathname === item.url ? "bg-gray-300" : ""
+                    )}
+                  >
+                    <Link href={item.url} className="text-lg">
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
               <Separator />
+
               {admin_features.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
