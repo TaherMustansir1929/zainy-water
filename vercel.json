@@ -6,7 +6,9 @@
   },
   "build": {
     "env": {
-      "PRISMA_CLIENT_ENGINE_TYPE": "library"
+      "PRISMA_CLIENT_ENGINE_TYPE": "library",
+      "PRISMA_CLI_BINARY_TARGETS": "rhel-openssl-3.0.x"
     }
-  }
+  },
+  "installCommand": "bun install && bunx prisma generate"
 }
