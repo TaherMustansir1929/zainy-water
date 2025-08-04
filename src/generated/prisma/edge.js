@@ -185,6 +185,10 @@ const config = {
         "fromEnvVar": null,
         "value": "rhel-openssl-3.0.x",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-1.0.x"
       }
     ],
     "previewFeatures": [],
@@ -192,7 +196,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -211,8 +215,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Area {\n  Saddar\n  Clifton\n  Gulshan\n  Korangi\n  Malir\n  NorthNazimabad\n  Gulistan\n  Liaquatabad\n  Nazimabad\n}\n\nmodel Customer {\n  id           String   @id @default(cuid())\n  customer_id  String   @unique\n  name         String\n  address      String\n  area         Area\n  phone        String\n  bottle_price Int\n  balance      Int\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  deliveries Delivery[]\n}\n\nmodel Moderator {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  password  String\n  areas     Area[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  deliveries   Delivery[]\n  OtherExpense OtherExpense[]\n}\n\nmodel Delivery {\n  id             String   @id @default(cuid())\n  customer_id    String\n  moderator_id   String\n  delivery_date  DateTime\n  payment        Int\n  filled_bottles Int\n  empty_bottles  Int\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n\n  moderator Moderator @relation(fields: [moderator_id], references: [id])\n  customer  Customer  @relation(fields: [customer_id], references: [customer_id])\n}\n\nmodel OtherExpense {\n  id           String   @id @default(cuid())\n  moderator_id String\n  amount       Int\n  description  String\n  date         DateTime\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  moderator Moderator @relation(fields: [moderator_id], references: [id])\n}\n",
-  "inlineSchemaHash": "41d5fff92f1505890e2ed9fcaa35959d86c0cafb1a7c437912d60eb683cbd386",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-1.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Area {\n  Saddar\n  Clifton\n  Gulshan\n  Korangi\n  Malir\n  NorthNazimabad\n  Gulistan\n  Liaquatabad\n  Nazimabad\n}\n\nmodel Customer {\n  id           String   @id @default(cuid())\n  customer_id  String   @unique\n  name         String\n  address      String\n  area         Area\n  phone        String\n  bottle_price Int\n  balance      Int\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  deliveries Delivery[]\n}\n\nmodel Moderator {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  password  String\n  areas     Area[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  deliveries   Delivery[]\n  OtherExpense OtherExpense[]\n}\n\nmodel Delivery {\n  id             String   @id @default(cuid())\n  customer_id    String\n  moderator_id   String\n  delivery_date  DateTime\n  payment        Int\n  filled_bottles Int\n  empty_bottles  Int\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n\n  moderator Moderator @relation(fields: [moderator_id], references: [id])\n  customer  Customer  @relation(fields: [customer_id], references: [customer_id])\n}\n\nmodel OtherExpense {\n  id           String   @id @default(cuid())\n  moderator_id String\n  amount       Int\n  description  String\n  date         DateTime\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  moderator Moderator @relation(fields: [moderator_id], references: [id])\n}\n",
+  "inlineSchemaHash": "98fa26a8f7ed0baf025ae835f1a059a0a273baa0691dbf4a54e9a9c0bce8af40",
   "copyEngine": true
 }
 config.dirname = '/'
