@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Customer } from "@/generated/prisma";
+import { Customer } from "@prisma/client";
 import {
   addDailyDeliveryRecord,
   DeliveryRecord,

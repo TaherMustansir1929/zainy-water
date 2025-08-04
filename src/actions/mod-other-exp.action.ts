@@ -1,6 +1,6 @@
 "use server";
 
-import { OtherExpense } from "@/generated/prisma";
+import { OtherExpense } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 
 export type OtherExpenseData = {

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { Delivery } from "@/generated/prisma";
+import { Delivery } from "@prisma/client";
 import { format } from "date-fns";
 import { useModeratorStore } from "@/lib/moderator-state";
 import {

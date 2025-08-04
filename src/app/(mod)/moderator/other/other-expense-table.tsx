@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { OtherExpense } from "@/generated/prisma";
+import { OtherExpense } from "@prisma/client";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";

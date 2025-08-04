@@ -1,6 +1,6 @@
 "use server";
 
-import { Customer, Delivery } from "@/generated/prisma";
+import { Customer, Delivery } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 
 export async function getCustomerDataById(

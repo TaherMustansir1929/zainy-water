@@ -1,4 +1,4 @@
-import { Area } from "@/generated/prisma";
+import { Area } from "@prisma/client";
 import { create } from "zustand";
 
 type ModeratorState = {
