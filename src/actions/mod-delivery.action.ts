@@ -35,7 +35,7 @@ export async function addDailyDeliveryRecord(
   data: DeliveryRecord
 ): Promise<Delivery | null> {
   try {
-    const customerUpdate = await prisma.customer.update({
+    await prisma.customer.update({
       where: {
         customer_id: data.customer_id,
       },

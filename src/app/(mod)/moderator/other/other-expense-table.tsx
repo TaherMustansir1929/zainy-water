@@ -2,7 +2,6 @@
 
 import { getOtherExpensesByModeratorId } from "@/actions/mod-other-exp.action";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
 import {
   Table,
   TableBody,
