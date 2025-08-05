@@ -18,7 +18,7 @@ const OtherExpensePage = async () => {
     <div className="flex flex-col md:items-center md:justify-center min-h-screen gap-y-6 p-2 mt-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-center flex items-center justify-center gap-2">
+          <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
             <CircleDollarSign />
             Other Expenses
           </CardTitle>

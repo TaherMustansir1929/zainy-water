@@ -1,3 +1,4 @@
+import { MainFooter } from "@/components/main-footer";
 import { ModHeader } from "./mod-header";
 
 type Props = {
@@ -9,6 +10,7 @@ const ModLayout = ({ children }: Props) => {
     <div>
       <ModHeader />
       {children}
+      <MainFooter />
     </div>
   );
 };

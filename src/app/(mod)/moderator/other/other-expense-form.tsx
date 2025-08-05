@@ -22,7 +22,7 @@ import {
 } from "@/actions/moderator/mod-other-exp.action";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, SendHorizonal } from "lucide-react";
 
 const formSchema = z.object({
   amount: z.number().min(1),
@@ -33,7 +33,7 @@ export function OtherExpenseForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: undefined,
+      amount: 0,
       description: "",
     },
   });
@@ -109,8 +109,13 @@ export function OtherExpenseForm() {
           )}
         />
 
-        <Button disabled={submitting} type="submit" className="w-full">
+        <Button
+          disabled={submitting}
+          type="submit"
+          className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
+        >
           Submit
+          <SendHorizonal className="size-4" />
           {submitting && <Loader2 className="animate-spin" />}
         </Button>
       </form>

@@ -25,6 +25,7 @@ import {
 import { Loader2, Search, SendHorizonal } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
+import { BottleInput } from "@/components/bottle-input";
 
 // FORM SCHEMA
 const formSchema = z.object({
@@ -281,7 +282,7 @@ export const DailyDeliveryForm = () => {
                   <FormControl>
                     <div className="*:not-first:mt-2">
                       <div className="relative">
-                        <Input
+                        {/* <Input
                           {...field}
                           className="peer ps-6 pe-12"
                           placeholder="00"
@@ -291,6 +292,11 @@ export const DailyDeliveryForm = () => {
                             // Convert to number or 0 if empty
                             field.onChange(value ? parseFloat(value) : 0);
                           }}
+                        /> */}
+                        <BottleInput
+                          field={field}
+                          onChange={field.onChange}
+                          defaultValue={0}
                         />
                       </div>
                     </div>
@@ -310,16 +316,10 @@ export const DailyDeliveryForm = () => {
                   <FormControl>
                     <div className="*:not-first:mt-2">
                       <div className="relative">
-                        <Input
-                          {...field}
-                          className="peer ps-6 pe-12"
-                          placeholder="00"
-                          type="number"
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            // Convert to number or 0 if empty
-                            field.onChange(value ? parseFloat(value) : 0);
-                          }}
+                        <BottleInput
+                          field={field}
+                          onChange={field.onChange}
+                          defaultValue={0}
                         />
                       </div>
                     </div>
