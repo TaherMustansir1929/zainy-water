@@ -11,6 +11,7 @@ export const useGetModeratorList = () => {
         name: mod.name,
         password: mod.password,
         areas: mod.areas,
+        isWorking: mod.isWorking,
       }));
     },
   });

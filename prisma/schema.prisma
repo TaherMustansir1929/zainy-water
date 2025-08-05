@@ -43,6 +43,7 @@ model Customer {
   phone        String
   bottle_price Int
   balance      Int
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -54,6 +55,7 @@ model Moderator {
   name      String   @unique
   password  String
   areas     Area[]
+  isWorking Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -72,8 +74,8 @@ model Delivery {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  moderator Moderator @relation(fields: [moderator_id], references: [id])
-  customer  Customer  @relation(fields: [customer_id], references: [customer_id])
+  moderator Moderator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
+  customer  Customer  @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
 }
 
 model OtherExpense {
@@ -85,5 +87,5 @@ model OtherExpense {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  moderator Moderator @relation(fields: [moderator_id], references: [id])
+  moderator Moderator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
 }
