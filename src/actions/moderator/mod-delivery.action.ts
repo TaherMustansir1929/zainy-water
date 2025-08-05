@@ -1,24 +1,7 @@
 "use server";
 
-import { Customer, Delivery } from "@prisma/client";
+import { Area, Customer, Delivery } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
-
-export async function getCustomerDataById(
-  id: string
-): Promise<Customer | null> {
-  try {
-    const data = await prisma.customer.findUnique({
-      where: {
-        customer_id: id,
-      },
-    });
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching customer data:", error);
-    return null;
-  }
-}
 
 export type DeliveryRecord = {
   balance: number;
@@ -78,11 +61,18 @@ export async function getDailyDeliveryRecords(
   return data;
 }
 
-export async function getCustomerById(customer_id: string) {
+export async function getCustomerDataById(customer_id: string, areas: Area[]) {
   try {
+    if (!areas || areas.length === 0) {
+      console.error("No areas provided for customer lookup.");
+      return null;
+    }
+
+    // Fetch customer data based on customer_id and areas
     const data = await prisma.customer.findUnique({
       where: {
         customer_id: customer_id,
+        area: { in: areas },
       },
     });
 

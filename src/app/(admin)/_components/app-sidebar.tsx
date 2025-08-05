@@ -29,27 +29,27 @@ import { usePathname } from "next/navigation";
 const items = [
   {
     title: "Bottle Inventory",
-    url: "/bottle-inventory",
+    url: "/admin/bottle-inventory",
     icon: Home,
   },
   {
     title: "Customer History",
-    url: "/customer-history",
+    url: "/admin/customer-history",
     icon: Inbox,
   },
   {
     title: "Set Bottle Price",
-    url: "/set-bottle-price",
+    url: "/admin/set-bottle-price",
     icon: Calendar,
   },
   {
     title: "Other Expenses",
-    url: "/other-expenses",
+    url: "/admin/other-expenses",
     icon: Search,
   },
   {
     title: "Moderator Reports",
-    url: "/moderator-reports",
+    url: "/admin/moderator-reports",
     icon: Settings,
   },
 ];
@@ -57,12 +57,12 @@ const items = [
 const admin_features = [
   {
     title: "Add Moderator",
-    url: "/add-moderator",
+    url: "/admin/add-moderator",
     icon: PlusCircle,
   },
   {
     title: "Change Password",
-    url: "/change-password",
+    url: "/admin/change-password",
     icon: Key,
   },
 ];
@@ -76,12 +76,14 @@ export function AppSidebar() {
         <SidebarGroup className="space-y-4">
           <SidebarGroupLabel className="flex items-center justify-center space-x-2 my-8">
             {/* <h1 className="text-2xl">Zainy Water</h1> */}
-            <Image
-              src={"/logo.jpg"}
-              alt="Zainy Water"
-              width={150}
-              height={150}
-            />
+            <Link href={"/admin"}>
+              <Image
+                src={"/logo.jpg"}
+                alt="Zainy Water"
+                width={150}
+                height={150}
+              />
+            </Link>
           </SidebarGroupLabel>
           <Separator />
           <SidebarGroupContent>
@@ -92,7 +94,7 @@ export function AppSidebar() {
                     asChild
                     className={cn(
                       "hover:bg-gray-100",
-                      pathname === item.url ? "bg-gray-300" : ""
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
                     )}
                   >
                     <Link href={item.url} className="text-lg">
@@ -107,7 +109,13 @@ export function AppSidebar() {
 
               {admin_features.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      "hover:bg-gray-100",
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                    )}
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>

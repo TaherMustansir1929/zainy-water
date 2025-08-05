@@ -22,15 +22,15 @@ import {
   DeliveryRecord,
   getCustomerDataById,
 } from "@/actions/moderator/mod-delivery.action";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search, SendHorizonal } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 
 // FORM SCHEMA
 const formSchema = z.object({
   customer_id: z.string().min(2).max(50),
-  filled_bottles: z.number().min(1),
-  empty_bottles: z.number().min(1),
+  filled_bottles: z.number().min(0),
+  empty_bottles: z.number().min(0),
   payment: z.number().min(0),
 });
 
@@ -40,30 +40,82 @@ export const DailyDeliveryForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       customer_id: "",
-      filled_bottles: undefined,
-      empty_bottles: undefined,
-      payment: undefined,
+      filled_bottles: 0,
+      empty_bottles: 0,
+      payment: 0,
     },
   });
 
   // STATES
   const [customerData, setCustomerData] = useState<Customer | null>(null);
-  const { moderator } = useModeratorStore();
+  const moderator = useModeratorStore((state) => state.moderator);
 
-  if (!moderator) {
-    // Handle moderator middleware or redirect
-  }
+  // Calculate balances based on payment flow
+  const calculateBalances = () => {
+    if (!customerData) {
+      return {
+        previous_balance: 0,
+        current_balance: 0,
+        advance_payment: 0,
+      };
+    }
 
-  const current_balance =
-    customerData &&
-    (customerData?.bottle_price * form.watch("filled_bottles") -
-      form.watch("payment") ||
-      0);
+    const filled_bottles = form.watch("filled_bottles") || 0;
+    const payment = form.watch("payment") || 0;
 
-  const advance_payment =
-    customerData &&
-    current_balance &&
-    Math.abs(customerData?.balance + current_balance);
+    // Previous balance from database (positive = customer owes, negative = customer has advance)
+    const db_previous_balance = customerData.balance;
+
+    // Current balance from today's delivery
+    const raw_current_balance = customerData.bottle_price * filled_bottles;
+
+    let remaining_payment = payment;
+    let current_balance = raw_current_balance;
+    let previous_balance = db_previous_balance;
+    let advance_payment = 0;
+
+    // First, deduct payment from current balance
+    if (remaining_payment > 0 && current_balance > 0) {
+      const deduction = Math.min(remaining_payment, current_balance);
+      current_balance -= deduction;
+      remaining_payment -= deduction;
+    }
+
+    // Then, deduct from previous balance if it's positive (customer owes money)
+    if (remaining_payment > 0 && previous_balance > 0) {
+      const deduction = Math.min(remaining_payment, previous_balance);
+      previous_balance -= deduction;
+      remaining_payment -= deduction;
+    }
+
+    // If payment is still remaining after clearing both balances, it becomes advance
+    if (remaining_payment > 0) {
+      advance_payment = remaining_payment;
+      // If customer already had negative balance (advance), add to it
+      if (previous_balance <= 0) {
+        advance_payment += Math.abs(previous_balance);
+        previous_balance = 0;
+      }
+    }
+
+    // If payment is less than current balance, add remaining current balance to previous balance
+    if (payment < raw_current_balance) {
+      previous_balance += current_balance;
+    }
+
+    return {
+      previous_balance: Math.max(0, previous_balance),
+      current_balance: Math.max(0, current_balance),
+      advance_payment:
+        advance_payment +
+        (db_previous_balance < 0 && remaining_payment === 0
+          ? Math.abs(db_previous_balance)
+          : 0),
+    };
+  };
+
+  const { previous_balance, current_balance, advance_payment } =
+    calculateBalances();
 
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -75,13 +127,41 @@ export const DailyDeliveryForm = () => {
     // Check if customer data is available
     if (!customerData) {
       alert("Please search for a customer first.");
+      setSubmitting(false);
       return;
     }
 
-    // Calculate balance
-    const current_balance =
-      customerData.bottle_price * values.filled_bottles - values.payment || 0;
-    const balance = current_balance + customerData.balance || 0;
+    // Calculate final balance for submission
+    const raw_current_balance =
+      customerData.bottle_price * values.filled_bottles;
+    const payment = values.payment || 0;
+    const db_previous_balance = customerData.balance;
+
+    let remaining_payment = payment;
+    let final_current_balance = raw_current_balance;
+    let final_previous_balance = db_previous_balance;
+
+    // Apply payment logic
+    if (remaining_payment > 0 && final_current_balance > 0) {
+      const deduction = Math.min(remaining_payment, final_current_balance);
+      final_current_balance -= deduction;
+      remaining_payment -= deduction;
+    }
+
+    if (remaining_payment > 0 && final_previous_balance > 0) {
+      const deduction = Math.min(remaining_payment, final_previous_balance);
+      final_previous_balance -= deduction;
+      remaining_payment -= deduction;
+    }
+
+    // Calculate final balance (negative means customer has advance)
+    let balance = final_previous_balance + final_current_balance;
+    if (remaining_payment > 0) {
+      balance = -(
+        remaining_payment +
+        (db_previous_balance < 0 ? Math.abs(db_previous_balance) : 0)
+      );
+    }
 
     // Prepare data to be submitted
     const data: DeliveryRecord = {
@@ -95,23 +175,31 @@ export const DailyDeliveryForm = () => {
     };
     console.log({ data });
 
-    const deliveryRecord = await addDailyDeliveryRecord(data);
-    console.log({ deliveryRecord });
+    try {
+      const deliveryRecord = await addDailyDeliveryRecord(data);
+      console.log({ deliveryRecord });
 
-    setSubmitting(false);
-
-    if (deliveryRecord) {
-      toast.success("Delivery record added successfully!");
-      form.reset();
-      setCustomerData(null);
-    } else {
+      if (deliveryRecord) {
+        form.reset();
+        setCustomerData(null);
+        toast.success("Delivery record added successfully!");
+      } else {
+        alert("Failed to add delivery record. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding delivery record:", error);
       alert("Failed to add delivery record. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
   const handleCustomerSearch = async () => {
     setLoading(true);
-    const data = await getCustomerDataById(form.getValues("customer_id"));
+    const data = await getCustomerDataById(
+      form.getValues("customer_id"),
+      moderator?.areas || []
+    );
     setLoading(false);
 
     if (data) {
@@ -141,7 +229,9 @@ export const DailyDeliveryForm = () => {
                       type="button"
                       onClick={handleCustomerSearch}
                       disabled={loading}
+                      className="shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50"
                     >
+                      <Search className="size-4" />
                       Search Customer
                       {loading && <Loader2 className="animate-spin" />}
                     </Button>
@@ -180,63 +270,65 @@ export const DailyDeliveryForm = () => {
             </Card>
           )}
 
-          {/* FILLED BOTTLES */}
-          <FormField
-            control={form.control}
-            name="filled_bottles"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Filled Bottles</FormLabel>
-                <FormControl>
-                  <div className="*:not-first:mt-2">
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        className="peer ps-6 pe-12"
-                        placeholder="00"
-                        type="number"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          // Convert to number or null if empty
-                          field.onChange(value ? parseFloat(value) : null);
-                        }}
-                      />
+          <div className="grid grid-cols-2 gap-4">
+            {/* FILLED BOTTLES */}
+            <FormField
+              control={form.control}
+              name="filled_bottles"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Filled Bottles</FormLabel>
+                  <FormControl>
+                    <div className="*:not-first:mt-2">
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          className="peer ps-6 pe-12"
+                          placeholder="00"
+                          type="number"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Convert to number or 0 if empty
+                            field.onChange(value ? parseFloat(value) : 0);
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* EMPTY BOTTLES */}
-          <FormField
-            control={form.control}
-            name="empty_bottles"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Empty Bottles</FormLabel>
-                <FormControl>
-                  <div className="*:not-first:mt-2">
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        className="peer ps-6 pe-12"
-                        placeholder="00"
-                        type="number"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          // Convert to number or null if empty
-                          field.onChange(value ? parseFloat(value) : null);
-                        }}
-                      />
+            {/* EMPTY BOTTLES */}
+            <FormField
+              control={form.control}
+              name="empty_bottles"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Empty Bottles</FormLabel>
+                  <FormControl>
+                    <div className="*:not-first:mt-2">
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          className="peer ps-6 pe-12"
+                          placeholder="00"
+                          type="number"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Convert to number or 0 if empty
+                            field.onChange(value ? parseFloat(value) : 0);
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* PAYMENT */}
           <FormField
@@ -255,8 +347,8 @@ export const DailyDeliveryForm = () => {
                         type="number"
                         onChange={(e) => {
                           const value = e.target.value;
-                          // Convert to number or null if empty
-                          field.onChange(value ? parseFloat(value) : null);
+                          // Convert to number or 0 if empty
+                          field.onChange(value ? parseFloat(value) : 0);
                         }}
                       />
                       <span className="text-muted-foreground pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-sm peer-disabled:opacity-50">
@@ -271,33 +363,53 @@ export const DailyDeliveryForm = () => {
           />
 
           {customerData && (
-            <div>
-              <h1 className="text-xl font-bold">Balance:</h1>
+            <div className="space-y-2 border border-gray-200 p-4 rounded-xl shadow-md">
+              <h1 className="text-xl font-bold underline">Balance Summary:</h1>
+
               <p>
-                <span className="font-bold">Previous Balance = </span>{" "}
-                {customerData?.balance || 0}/-
-              </p>
-              <p>
-                <span className="font-bold">Current Balance = </span>{" "}
-                {current_balance}
+                <span className="font-bold">Today&apos;s Bill:</span>{" "}
+                {(form.watch("filled_bottles") || 0) *
+                  customerData.bottle_price}
                 /-
               </p>
-              {current_balance &&
-                customerData.balance + current_balance < 0 && (
-                  <p>
-                    <span className="font-bold">Advance Amount = </span>{" "}
-                    {advance_payment}/-
-                  </p>
-                )}
+              {(form.watch("payment") || 0) > 0 && (
+                <p>
+                  <span className="font-bold">Payment Received:</span>{" "}
+                  {form.watch("payment")}/-
+                </p>
+              )}
+              <p>
+                <span className="font-bold">Total Remaining Balance:</span>{" "}
+                {previous_balance}/-
+              </p>
+              <div className="border-t pt-2 border-gray-500">
+                <p>
+                  <span className="font-bold">Previous Balance:</span>{" "}
+                  {customerData.balance > 0
+                    ? `${customerData.balance}/- (Customer owes)`
+                    : customerData.balance < 0
+                    ? `${Math.abs(customerData.balance)}/- (Advance paid)`
+                    : "0/- (Clear)"}
+                </p>
+                <p>
+                  <span className="font-bold">Remaining Current Balance:</span>{" "}
+                  {current_balance}/-
+                </p>
+                <p>
+                  <span className="font-bold">Advance Amount:</span>{" "}
+                  {advance_payment}/-
+                </p>
+              </div>
             </div>
           )}
 
           <Button
             disabled={!customerData || submitting}
             type="submit"
-            className="w-full"
+            className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
           >
             Submit
+            <SendHorizonal className="size-4" />
             {submitting && <Loader2 className="size-4 animate-spin" />}
           </Button>
         </form>

@@ -1,5 +1,6 @@
 import { Area } from "@prisma/client";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type ModeratorState = {
   id: string;
@@ -12,7 +13,15 @@ type ModeratorStore = {
   setModerator: (moderator: ModeratorState | null) => void;
 };
 
-export const useModeratorStore = create<ModeratorStore>((set) => ({
-  moderator: null,
-  setModerator: (moderator) => set({ moderator }),
-}));
+export const useModeratorStore = create<ModeratorStore>()(
+  persist(
+    (set) => ({
+      moderator: null,
+      setModerator: (moderator) => set({ moderator }),
+    }),
+    {
+      name: "moderator-storage", // unique name for localStorage key
+      partialize: (state) => ({ moderator: state.moderator }),
+    }
+  )
+);

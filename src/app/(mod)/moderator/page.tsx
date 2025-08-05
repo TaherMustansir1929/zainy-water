@@ -20,7 +20,7 @@ const ModeratorPage = async () => {
     <main className="min-h-screen w-full flex flex-col md:items-center md:justify-center my-4 gap-y-4 p-2">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-center flex items-center justify-center gap-2">
+          <CardTitle className="text-primary font-bold text-xl text-center flex items-center justify-center gap-2">
             <CalendarCheck />
             Daily Delivery Entry
           </CardTitle>

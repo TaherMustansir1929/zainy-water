@@ -13,11 +13,12 @@ import { Delivery } from "@prisma/client";
 import { format } from "date-fns";
 import { useModeratorStore } from "@/lib/moderator-state";
 import {
-  getCustomerById,
+  getCustomerDataById,
   getDailyDeliveryRecords,
 } from "@/actions/moderator/mod-delivery.action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { redirect } from "next/navigation";
 
 type DeliveryTableData = {
   delivery: Delivery;
@@ -29,18 +30,16 @@ export const DailyDeliveryTable = () => {
   const [listLoading, setListLoading] = useState(false);
 
   const [deliveries, setDeliveries] = useState<DeliveryTableData[]>([]);
-  const { moderator } = useModeratorStore();
+  const moderator = useModeratorStore((state) => state.moderator);
 
   const getCustomer = async (id: string) => {
-    return await getCustomerById(id);
+    return await getCustomerDataById(id, moderator?.areas || []);
   };
 
   const fetchDeliveries = async () => {
     setListLoading(true);
     // Fetch deliveries for the current moderator
-    const delivery_data = await getDailyDeliveryRecords(
-      moderator?.id || "cmdwsek000000ijja4qqbsa8t"
-    );
+    const delivery_data = await getDailyDeliveryRecords(moderator?.id || "");
 
     setListLoading(false);
 

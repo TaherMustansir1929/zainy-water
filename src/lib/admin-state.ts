@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type AdminState = {
   id: string;
@@ -10,7 +11,15 @@ type AdminStore = {
   setAdmin: (admin: AdminState | null) => void;
 };
 
-export const useAdminStore = create<AdminStore>((set) => ({
-  admin: null,
-  setAdmin: (admin) => set({ admin }),
-}));
+export const useAdminStore = create<AdminStore>()(
+  persist(
+    (set) => ({
+      admin: null,
+      setAdmin: (admin) => set({ admin }),
+    }),
+    {
+      name: "admin-storage", // unique name for localStorage key
+      partialize: (state) => ({ admin: state.admin }),
+    }
+  )
+);
