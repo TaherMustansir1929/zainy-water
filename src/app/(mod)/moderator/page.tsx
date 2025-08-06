@@ -10,9 +10,8 @@ import { redirect } from "next/navigation";
 
 const ModeratorPage = async () => {
   const moderator = await moderatorMiddleware();
-  console.log(moderator);
 
-  if (!moderator) {
+  if (!moderator.success) {
     redirect("/moderator/login");
   }
 

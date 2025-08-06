@@ -1,11 +1,4 @@
-import { AdminHeader } from "./admin-header";
-
 const layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div>
-      <AdminHeader />
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 };
 export default layout;

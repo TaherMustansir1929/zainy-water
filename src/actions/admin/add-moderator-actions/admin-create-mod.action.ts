@@ -1,6 +1,6 @@
 "use server";
 import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 export async function createModerator(data: Moderator) {
   try {

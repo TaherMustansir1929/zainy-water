@@ -1,14 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
+import { SidebarToggleButton } from "../../_components/sidebar-toggle-button";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useModeratorStore } from "@/lib/moderator-state";
-import Image from "next/image";
-import { redirect, usePathname } from "next/navigation";
+import { useAdminStore } from "@/lib/admin-state";
 
-export const ModHeader = () => {
-  const pathname = usePathname();
-
+export const AdminHeader = () => {
   const [LogoutConfirmDialog, logout_confirm] = useConfirm(
     "Are you sure you want to log out?",
     "You will be redirected to the login page."
@@ -18,23 +16,24 @@ export const ModHeader = () => {
     const ok = await logout_confirm();
     if (!ok) return;
 
-    // Clear moderator state and cookies
-    useModeratorStore.getState().setModerator(null);
-    await cookieStore.delete("moderator_id");
-    redirect("/moderator/login");
+    // Clear admin state and cookies
+    useAdminStore.getState().setAdmin(null);
+    await cookieStore.delete("admin_id");
+    redirect("/admin/login");
   };
 
   return (
     <header className="w-full border-b border-gray-200 p-2 flex justify-between items-center">
       <LogoutConfirmDialog />
-      <h1 className="text-lg font-semibold">
-        <Image src={"/logo.jpg"} alt="Zainy Water" width={120} height={120} />
-      </h1>
-      {!(pathname === "/moderator/login") && (
+      <div>
+        <SidebarToggleButton />
+      </div>
+      <h1 className="text-lg font-semibold font-mono">Admin Dashboard</h1>
+      <div>
         <Button variant="outline" size={"sm"} onClick={handleLogout}>
           Logout
         </Button>
-      )}
+      </div>
     </header>
   );
 };

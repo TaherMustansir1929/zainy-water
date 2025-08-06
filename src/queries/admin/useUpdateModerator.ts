@@ -1,4 +1,4 @@
-import { updateModeratorByName } from "@/actions/admin/admin-update-mod.action";
+import { updateModeratorByName } from "@/actions/admin/add-moderator-actions/admin-update-mod.action";
 import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Moderator as ModeratorPrisma } from "@prisma/client";

@@ -67,11 +67,15 @@ const admin_features = [
   },
 ];
 
-export function AppSidebar() {
+type Props = {
+  className?: string;
+};
+
+export function AppSidebar({ className }: Props) {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="">
+    <Sidebar className={cn("flex-1", className)}>
       <SidebarContent>
         <SidebarGroup className="space-y-4">
           <SidebarGroupLabel className="flex items-center justify-center space-x-2 my-8">

@@ -1,4 +1,4 @@
-import { getAllModeratorList } from "@/actions/admin/admin-get-mod-list";
+import { getAllModeratorList } from "@/actions/admin/add-moderator-actions/admin-get-mod-list";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetModeratorList = () => {

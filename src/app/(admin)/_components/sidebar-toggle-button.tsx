@@ -3,18 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-
-interface Props extends React.ComponentProps<typeof Button> {
-  icon: React.ReactNode;
-}
+import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 export const SidebarToggleButton = ({
   className,
   onClick,
-  icon,
   ...props
-}: Props) => {
-  const { toggleSidebar } = useSidebar();
+}: React.ComponentProps<typeof Button>) => {
+  const { toggleSidebar, open, isMobile } = useSidebar();
 
   return (
     <Button
@@ -29,7 +25,15 @@ export const SidebarToggleButton = ({
       }}
       {...props}
     >
-      {icon}
+      <div className="text-muted-foreground">
+        {isMobile ? (
+          <Menu className="size-6" />
+        ) : open ? (
+          <PanelLeftClose className="size-6" />
+        ) : (
+          <PanelLeftOpen className="size-6" />
+        )}
+      </div>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

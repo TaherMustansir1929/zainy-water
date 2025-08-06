@@ -49,7 +49,6 @@ export const ModLoginForm = () => {
     setSubmitting(false);
 
     if (!success || !mod_data) {
-      form.setError("root", { type: "manual", message });
       toast.error(message);
       return;
     }

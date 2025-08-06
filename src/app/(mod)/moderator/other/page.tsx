@@ -6,11 +6,12 @@ import Link from "next/link";
 import { CircleDollarSign, LinkIcon } from "lucide-react";
 import { moderatorMiddleware } from "@/actions/moderator/mod-middleware";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 const OtherExpensePage = async () => {
   const moderator = await moderatorMiddleware();
 
-  if (!moderator) {
+  if (!moderator.success) {
     redirect("/moderator/login");
   }
 

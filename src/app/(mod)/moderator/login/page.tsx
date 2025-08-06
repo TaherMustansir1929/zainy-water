@@ -10,7 +10,10 @@ import {
 
 const ModLoginPage = () => {
   return (
-    <div className="flex flex-col md:items-center md:justify-center min-h-screen gap-y-6 p-2 mt-4">
+    <div
+      className="flex flex-col md:items-center md:justify-center gap-y-6 p-2 mt-4"
+      style={{ minHeight: "calc(100vh - 130px)" }}
+    >
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-center flex items-center justify-center gap-3">

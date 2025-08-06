@@ -2,7 +2,7 @@
 
 import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
 import { Moderator as ModeratorPrisma } from "@prisma/client";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 export async function updateModeratorByName(
   name: string,

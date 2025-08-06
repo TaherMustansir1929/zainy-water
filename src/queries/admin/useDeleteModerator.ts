@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteModerator } from "@/actions/admin/admin-delete-mod.action";
+import { deleteModerator } from "@/actions/admin/add-moderator-actions/admin-delete-mod.action";
 
 export const useDeleteModerator = () => {
   const queryClient = useQueryClient();
