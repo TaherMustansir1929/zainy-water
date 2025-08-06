@@ -42,6 +42,8 @@ model Customer {
   area         Area
   phone        String
   bottle_price Int
+  bottles      Int
+  deposit      Int
   balance      Int
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
@@ -64,15 +66,17 @@ model Moderator {
 }
 
 model Delivery {
-  id             String   @id @default(cuid())
-  customer_id    String
-  moderator_id   String
-  delivery_date  DateTime
-  payment        Int
-  filled_bottles Int
-  empty_bottles  Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(cuid())
+  customer_id     String
+  moderator_id    String
+  delivery_date   DateTime
+  payment         Int
+  filled_bottles  Int
+  empty_bottles   Int
+  foc             Int
+  damaged_bottles Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   moderator Moderator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
   customer  Customer  @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
@@ -88,4 +92,32 @@ model OtherExpense {
   updatedAt    DateTime @updatedAt
 
   moderator Moderator @relation(fields: [moderator_id], references: [id], onDelete: Cascade)
+}
+
+model FOC {
+  id          String   @id @default(cuid())
+  bottles     Int
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TotalBottles {
+  id                String   @id @default(cuid())
+  total_bottles     Int
+  available_bottles Int
+  damaged_bottles   Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model BottleUsage {
+  id               String   @id @default(cuid())
+  filled_bottles   Int
+  sales            Int
+  empty_bottles    Int
+  returned_bottles Int
+  caps             Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

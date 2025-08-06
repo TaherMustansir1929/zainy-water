@@ -8,8 +8,17 @@ import {
 } from "@/components/ui/card";
 import { AdminLoginForm } from "./admin-login-form";
 import { AdminLoginHeader } from "./admin-login-header";
+import { adminLoginStatus } from "@/actions/admin/admin-login-status";
+import { redirect } from "next/navigation";
 
-const AdminLogin = () => {
+const AdminLogin = async () => {
+  const isLoggedIn = await adminLoginStatus();
+  console.log(isLoggedIn.message);
+
+  if (isLoggedIn.success) {
+    redirect("/admin");
+  }
+
   return (
     <main>
       <AdminLoginHeader />

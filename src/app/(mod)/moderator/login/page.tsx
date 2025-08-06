@@ -7,8 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { modLoginStatus } from "@/actions/moderator/mod-login-status.action";
 
-const ModLoginPage = () => {
+const ModLoginPage = async () => {
+  const isLoggedIn = await modLoginStatus();
+  console.log(isLoggedIn.message);
+
+  if (isLoggedIn.success) {
+    redirect(`/moderator`);
+  }
+
   return (
     <div
       className="flex flex-col md:items-center md:justify-center gap-y-6 p-2 mt-4"
